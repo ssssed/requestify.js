@@ -1,51 +1,5 @@
-type RequestMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
-
-type RequestHeaders = {
-    [key: string]: string;
-};
-
-type RequestInitial<T> = {
-    headers?: RequestHeaders;
-    body?: T;
-    cache?: RequestCache;
-    credentials?: RequestCredentials;
-    integrity?: string;
-    keepalive?: boolean;
-    method?: string;
-    mode?: RequestMode;
-    redirect?: RequestRedirect;
-    referrer?: string;
-    referrerPolicy?: ReferrerPolicy;
-    signal?: AbortSignal | null;
-    window?: null;
-    beforeInterceptor?: (request: Request) => Request;
-    afterInterceptor?: <T>(response: Response) => Promise<IResponse<T>>;
-}
-
-interface IRequest {
-    baseUrl?: string;
-    headers?: RequestHeaders;
-    get: <T>(url: string, configs?: RequestInitial<undefined>) => Promise<IResponse<T>>;
-    post: <T, R>(url: string, configs: RequestInitial<T>) => Promise<IResponse<R>>;
-    put: <T, R>(url: string, configs: RequestInitial<T>) => Promise<IResponse<R>>;
-    patch: <T, R>(url: string, configs: RequestInitial<T>) => Promise<IResponse<R>>;
-    delete: <T, R>(url: string, configs: RequestInitial<T>) => Promise<IResponse<R>>;
-    create: () => IRequest;
-    _caches: Map<string, any>
-}
-
-interface IResponse<T> {
-    status: number;
-    headers: Headers,
-    data: T
-}
-
-const defaultBeforeInterceptor = (request: Request) => request;
-const defaultAfterInterceptor = async <T>(response: Response): Promise<IResponse<T>> => ({
-    status: response.status,
-    headers: response.headers,
-    data: await response.json()
-});
+import { DEFAULT_CONFIG, cache, defaultAfterInterceptor, defaultBeforeInterceptor, saveToCache } from "./helpers";
+import { IRequest, IResponse, RequestHeaders, RequestInitial, RequestMethod } from "./types";
 
 const http = async <T, R>(method: RequestMethod, url: string, init: RequestInitial<T>): Promise<IResponse<R>> => {
     const { beforeInterceptor = defaultBeforeInterceptor, afterInterceptor = defaultAfterInterceptor, ...requestInit } = init;
@@ -65,55 +19,94 @@ const http = async <T, R>(method: RequestMethod, url: string, init: RequestIniti
     return afterInterceptor<R>(response);
 }
 
-const DEFAULT_CONFIG: RequestInitial<undefined> = {
-    beforeInterceptor: defaultBeforeInterceptor,
-    afterInterceptor: defaultAfterInterceptor,
-    body: undefined,
-    headers: {},
-    cache: "no-cache"
-}
-
 export const request: IRequest = {
     _caches: new Map<string, any>(),
-    set baseUrl(url: string) {
-        this.baseUrl = url;
-    },
-    set headers(headers: RequestHeaders) {
-        this.headers = headers;
-    },
     async get<T>(url: string, configs = DEFAULT_CONFIG): Promise<IResponse<T>> {
-        const cacheKey = JSON.stringify({ method: "GET", url, data: configs.body });
+        const cacheKey = JSON.stringify({ method: "GET", url, data: configs });
 
-        const isCache = configs.cache === "default" || configs.cache === "force-cache";
-        const hasCache = this._caches.has(cacheKey);
+        const { isCache, hasCache, data: cacheData } = cache<undefined, T>(cacheKey, configs, this._caches);
 
-        if (isCache && hasCache) {
-            // Если есть в кеше, то возвращаем из кеша
-            return this._caches.get(cacheKey);
-        }
+        if (cacheData) {
+            return {
+                status: 200,
+                headers: new Headers(),
+                data: cacheData
+            }
+        };
 
-        const data = await http<undefined, T>("GET", url, configs);
+        const data = await http<undefined, T>("GET", `${this.baseUrl}${url}`, { ...configs, headers: { ...this.headers, ...configs.headers } });
 
-        if (isCache && !hasCache) {
-            // если режим кеширования включен, но у нас нет в кеше, то сохраняем его в кеш
-            this._caches.set(cacheKey, data)
-            console.log(cacheKey, this._caches);
-        }
+        saveToCache({ isCache, hasCache, cacheKey, data, cached: this._caches })
         return data;
     },
     async post<T, R>(url: string, configs: RequestInitial<T>): Promise<IResponse<R>> {
-        return await http<T, R>("POST", url, configs);
+        const cacheKey = JSON.stringify({ method: "POST", url, data: configs });
+
+        const { isCache, hasCache, data: cacheData } = cache<T, R>(cacheKey, configs, this._caches);
+
+        if (cacheData) {
+            return {
+                status: 200,
+                headers: new Headers(),
+                data: cacheData
+            }
+        };
+
+        const data = await http<T, R>("POST", `${this.baseUrl}${url}`, { ...configs, headers: { ...this.headers, ...configs.headers } });
+
+        saveToCache({ isCache, hasCache, data, cacheKey, cached: this._caches })
+
+        return data;
     },
     async patch<T, R>(url: string, configs: RequestInitial<T>): Promise<IResponse<R>> {
-        return await http<T, R>("PATCH", url, configs);
+        const cacheKey = JSON.stringify({ method: "PATCH", url, data: configs });
+
+        const { isCache, hasCache, data: cacheData } = cache<T, R>(cacheKey, configs, this._caches);
+
+        if (cacheData) {
+            return {
+                status: 200,
+                headers: new Headers(),
+                data: cacheData
+            }
+        };
+        const data = await http<T, R>("PATCH", `${this.baseUrl}${url}`, { ...configs, headers: { ...this.headers, ...configs.headers } });
+        saveToCache({ isCache, hasCache, data, cacheKey, cached: this._caches })
+        return data;
     },
     async put<T, R>(url: string, configs: RequestInitial<T>): Promise<IResponse<R>> {
-        return await http<T, R>("PUT", url, configs);
+        const cacheKey = JSON.stringify({ method: "PUT", url, data: configs });
+
+        const { isCache, hasCache, data: cacheData } = cache<T, R>(cacheKey, configs, this._caches);
+
+        if (cacheData) {
+            return {
+                status: 200,
+                headers: new Headers(),
+                data: cacheData
+            }
+        };
+        const data = await http<T, R>("PUT", `${this.baseUrl}${url}`, { ...configs, headers: { ...this.headers, ...configs.headers } });
+        saveToCache({ isCache, hasCache, data, cacheKey, cached: this._caches })
+        return data;
     },
     async delete<T, R>(url: string, configs: RequestInitial<T>): Promise<IResponse<R>> {
-        return await http<T, R>("DELETE", url, configs);
+        const cacheKey = JSON.stringify({ method: "DELETE", url, data: configs });
+
+        const { isCache, hasCache, data: cacheData } = cache<T, R>(cacheKey, configs, this._caches);
+
+        if (cacheData) {
+            return {
+                status: 200,
+                headers: new Headers(),
+                data: cacheData
+            }
+        };
+        const data = await http<T, R>("DELETE", `${this.baseUrl}${url}`, { ...configs, headers: { ...this.headers, ...configs.headers } });
+        saveToCache({ isCache, hasCache, data, cacheKey, cached: this._caches })
+        return data;
     },
     create() {
-        return { ...request, _caches: new Map<string, any>() };
+        return { ...request, _caches: new Map<string, any>(), baseUrl: "", headers: {} };
     },
 }
