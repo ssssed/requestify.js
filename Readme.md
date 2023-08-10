@@ -197,7 +197,7 @@ request.get('https://api.example.com/users', {
 ### All options requested
 ---
 
-```js
+```typescript
 interface IRequest {
     baseUrl?: string;
     headers?: RequestHeaders;
