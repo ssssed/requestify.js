@@ -1,15 +1,15 @@
 {
   "compilerOptions": {
-    "target": "ES6",            // Целевая версия ECMAScript (ES6 для современных браузеров)
-    "module": "ES6",            // Используем модули ES6
-    "declaration": true,       // Генерировать файлы объявлений .d.ts
-    "outDir": "./dist",         // Папка для выходных файлов
-    "rootDir": "./src",         // Папка с исходным кодом
-    "strict": true,             // Включить строгий режим (по вашему усмотрению)
-    "esModuleInterop": true,    // Использовать интероперабельность модулей ES6
-    "forceConsistentCasingInFileNames": true, // Проверка регистра имен файлов
-    "lib": ["DOM", "ES6"]       // Используем библиотеки DOM и ES6
+    "target": "ES2015",
+    "sourceMap": true,
+    "module": "ES2015",
+    "lib": ["DOM"],
+    "declaration": true,
+    "strict": true,
+    "outDir": "dist",
+    "esModuleInterop": true,
+    "moduleResolution": "Bundler"
   },
-  "include": ["src/**/*.ts"],   // Файлы, которые нужно компилировать
-  "exclude": ["node_modules"]   // Папки/файлы, которые нужно исключить
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "dist", "test"]
 }
