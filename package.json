@@ -1,8 +1,8 @@
 {
   "name": "requestify.js",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "An add-on over fetch that allows convenient handling of caching and interceptor",
-  "main": "dist/index.min.js",
+  "main": "dist/bundle.min.js",
   "scripts": {
     "build": "rollup -c"
   },
