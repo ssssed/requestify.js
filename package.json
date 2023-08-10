@@ -4,10 +4,11 @@
   "description": "An add-on over fetch that allows convenient handling of caching and interceptor",
   "main": "dist/index.min.js",
   "scripts": {
-    "build": "tsc",
-    "minify": "terser dist/index.js -o dist/index.min.js",
-    "prepublishOnly": "npm run build && npm run minify"
+    "build": "rollup -c"
   },
+  "files": [
+    "dist"
+  ],
   "keywords": [
     "http",
     "library",
@@ -22,7 +23,9 @@
   "author": "Igor Koneshov",
   "license": "MIT",
   "devDependencies": {
-    "terser": "^5.19.2",
+    "rollup": "^2.79.1",
+    "rollup-plugin-terser": "^7.0.2",
+    "rollup-plugin-typescript2": "^0.35.0",
     "typescript": "^5.1.6"
   }
 }
