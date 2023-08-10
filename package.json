@@ -1,0 +1,28 @@
+{
+  "name": "requestify.js",
+  "version": "1.0.1",
+  "description": "An add-on over fetch that allows convenient handling of caching and interceptor",
+  "main": "dist/index.min.js",
+  "scripts": {
+    "build": "tsc",
+    "minify": "terser dist/index.js -o dist/index.min.js",
+    "prepublishOnly": "npm run build && npm run minify"
+  },
+  "keywords": [
+    "http",
+    "library",
+    "client",
+    "request",
+    "ajax",
+    "promise",
+    "web",
+    "api",
+    "3MB"
+  ],
+  "author": "Igor Koneshov",
+  "license": "MIT",
+  "devDependencies": {
+    "terser": "^5.19.2",
+    "typescript": "^5.1.6"
+  }
+}
