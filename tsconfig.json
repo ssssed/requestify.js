@@ -1,15 +1,14 @@
 {
-  "compilerOptions": {
-    "target": "ES2015",
-    "sourceMap": true,
-    "module": "ES2015",
-    "lib": ["DOM"],
-    "declaration": true,
-    "strict": true,
-    "outDir": "dist",
-    "esModuleInterop": true,
-    "moduleResolution": "Bundler"
-  },
-  "include": ["src/**/*.ts"],
-  "exclude": ["node_modules", "dist", "test"]
+	"compilerOptions": {
+		"target": "ES2015",
+		"sourceMap": false,
+		"module": "ES2015",
+		"declaration": true,
+		"strict": true,
+		"outDir": "dist",
+		"esModuleInterop": true,
+		"moduleResolution": "Bundler"
+	},
+	"include": ["src/**/*.ts"],
+	"exclude": ["node_modules", "dist", "test"]
 }
