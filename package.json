@@ -1,7 +1,6 @@
 {
   "name": "requestify.js",
   "description": "Лёгкий и расширяемый HTTP-клиент с поддержкой middleware.",
-  "private": true,
   "version": "2.1.0",
   "type": "module",
   "repository": {
