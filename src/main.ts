@@ -249,7 +249,7 @@ export class HttpClient<T = Response> {
    */
   async delete<Body, Resp = T>(
     url: Url,
-    body: Body,
+    body?: Body,
     config?: Config
   ): Promise<Resp> {
     let copyConfig = structuredClone(config);

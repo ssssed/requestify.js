@@ -44,6 +44,7 @@ export default defineConfig({
         text: 'Helpers',
         items: [
           { text: 'defineMiddleware', link: '/helpers/define-middleware' },
+          { text: 'default middlewares', link: '/helpers/default-middlewares' },
         ],
       },
       {
