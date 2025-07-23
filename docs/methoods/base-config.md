@@ -7,6 +7,7 @@ new HttpClient({
   baseUrl?: string;
   headers?: Record<string, string>;
   middlewares?: Middleware[];
+  serializeBodyData?: (body: unknown) => BodyInit | null | undefined;
 });
 ```
 
@@ -25,6 +26,7 @@ new HttpClient({
   - Пример: `{ 'Authorization': 'Bearer ...', 'Content-Type': 'application/json' }`
 
 - **middlewares** (массив Middleware, необязательно)
+
   - Список middleware, которые будут применяться к каждому запросу и/или ответу.
   - Middleware позволяют реализовать кросс-срезные задачи: логирование, обработку ошибок, преобразование данных, автоматическую авторизацию и др.
   - Пример:
@@ -35,14 +37,39 @@ new HttpClient({
     ]
     ```
 
+- **serializeBodyData** (функция, необязательно)
+  - Функция для сериализации тела запроса (body) по умолчанию для всех методов (`post`, `put`, `patch`, `delete`).
+  - По умолчанию сериализует объекты в JSON, а FormData/Blob/ArrayBuffer/строку — отправляет как есть.
+  - Можно переопределить для каждого запроса через config.serializeBodyData.
+  - Пример глобального переопределения (только для примера — базовая логика сериализации уже реализована под капотом, подробнее см. [документацию по сериализации](../others/serialize.md)):
+    ```ts
+    new HttpClient({
+      serializeBodyData: (body) => {
+        if (body instanceof FormData) return body;
+        return JSON.stringify(body);
+      },
+    });
+    ```
+  - Пример локального переопределения для одного запроса:
+    ```ts
+    const client = new HttpClient();
+    const formData = new FormData();
+    formData.append("file", file);
+    await client.post("/upload", formData, {
+      serializeBodyData: (data) => data, // отправляем FormData как есть только для этого запроса
+    });
+    ```
+
 ## Функционал базовой конфигурации
 
 - Позволяет централизованно управлять базовым адресом API.
 - Упрощает добавление общих заголовков для всех запросов.
 - Даёт возможность гибко расширять и изменять поведение клиента через middleware.
+- Позволяет гибко управлять сериализацией тела запроса для разных форматов данных.
 
 **Рекомендуется**:
 
 - Использовать `baseUrl` для всех запросов к одному API.
 - Передавать необходимые заголовки через `headers`, чтобы не дублировать их в каждом запросе.
 - Реализовывать повторно используемую логику через middleware и подключать их через параметр `middlewares`.
+- Для особых случаев сериализации использовать параметр `serializeBodyData` глобально или для конкретного запроса.

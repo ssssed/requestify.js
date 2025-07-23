@@ -11,9 +11,9 @@ export default defineConfig({
       { text: 'Home', link: '/' },
       { text: 'API', items: [
         {text: 'Installation', link: '/installation'},
-        {text: 'Methoods', link: '/methoods'},
-        {text: 'Helpers', link: '/helpers'},
-        {text: 'Migrations', link: '/migrations'},
+        {text: 'Methoods', link: '/methoods/post'},
+        {text: 'Helpers', link: '/helpers/define-middleware'},
+        {text: 'Migrations', link: '/migrations/v1-v2'},
       ] },
     ],
     sidebar: [
@@ -37,6 +37,7 @@ export default defineConfig({
           { text: 'registerMiddleware', link: '/methoods/register-middleware' },
           { text: 'removeMiddleware', link: '/methoods/remove-middleware' },
           { text: 'copy', link: '/methoods/copy' },
+          { text: 'serializeBodyData', link: '/methoods/serialize-body-data' },
         ],
       },
       {
