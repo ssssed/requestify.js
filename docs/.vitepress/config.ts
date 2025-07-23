@@ -2,6 +2,7 @@
 import { defineConfig } from 'vitepress';
 
 export default defineConfig({
+  base: '/requestify.js/',
   title: 'requestify.js',
   description: 'Лёгкий и расширяемый HTTP-клиент с поддержкой middleware.',
   lang: 'ru-RU',

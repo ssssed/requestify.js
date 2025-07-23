@@ -6,5 +6,5 @@
 - [Быстрый старт](./installation.md#🚨-быстрое-начало)
 - [Методы](./methoods/base-config.md)
 - [Middleware](./methoods/middleware.md)
-- [Best Practices](./helpers/best-practices.md)
+- [Best Practices](./others/best-practices.md)
 - [Миграция с v1 на v2](./migrations/v1-v2.md)

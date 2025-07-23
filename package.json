@@ -1,23 +1,58 @@
 {
-  "name": "http-lib",
+  "name": "requestify.js",
+  "description": "Лёгкий и расширяемый HTTP-клиент с поддержкой middleware.",
   "private": true,
   "version": "2.1.0",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ssssed/requestify.js.git"
+  },
+  "keywords": [
+    "http",
+    "axios",
+    "requestify",
+    "library",
+    "client",
+    "request",
+    "ajax",
+    "promise",
+    "web",
+    "api"
+  ],
+  "author": "Igor Koneshov",
+  "license": "MIT",
+  "main": "./dist/index.cjs.js",
+  "module": "./dist/index.es.js",
+  "homepage": "https://ssssed.github.io/requestify.js/installation.html",
+  "exports": {
+    ".": {
+      "import": "./dist/index.es.js",
+      "require": "./dist/index.cjs.js",
+      "types": "./dist/types/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build:bundle": "vite build",
+    "build:types": "tsc --emitDeclarationOnly",
+    "build": "npm run build:bundle && npm run build:types",
     "preview": "vite preview",
     "test": "jest",
     "docs:dev": "vitepress dev docs",
     "docs:preview": "vitepress preview docs",
-    "docs:build": "vitepress build docs"
+    "docs:build": "vitepress build docs",
+    "docs:deploy": "gh-pages -d docs/.vitepress/dist"
   },
   "devDependencies": {
     "@types/jest": "^29.0.0",
+    "gh-pages": "^6.3.0",
     "jest": "^29.0.0",
     "ts-jest": "^29.0.0",
     "ts-node": "^10.9.2",
-    "typedoc": "^0.28.7",
     "typescript": "~5.8.3",
     "vite": "^7.0.4",
     "vitepress": "^1.6.3"
