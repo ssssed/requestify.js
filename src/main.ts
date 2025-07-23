@@ -70,38 +70,15 @@ export class HttpClient<T = Response> {
     this._middlewares = config?.middlewares || [];
   }
 
-  /**
-   * Регистрирует новый middleware и возвращает новый инстанс HttpClient
-   * с обновленной типизацией, учитывающей добавленный middleware.
-   *
-   * Важно: если вы вызываете этот метод в формате
-   * ```ts
-   * $api.registerMiddleware({...})
-   * ```
-   * то типизация у исходного инстанса `$api` **не изменится**.
-   * Для корректного использования нового типа необходимо
-   * присвоить результат вызова в переменную:
-   * ```ts
-   * $api = $api.registerMiddleware({...});
-   * ```
-   *
-   * ВАЖНО `registerMiddleware`, вызываемый отдельно от инициализации,
-   * создает **новый типизированный инстанс**, НО который **СОХРАНЯЕТ** ссылку на `middlewares` у HttpClient.
-   *
-   * @template Name - имя middleware
-   * @template Next - тип следующего шага (результат после middleware)
-   * @param {Middleware<Name, T, Next>} middleware - middleware для регистрации
-   * @returns {HttpClient<Next>} новый инстанс HttpClient с обновленной типизацией
+   /**
+   * Регистрирует middleware и мутирует текущий инстанс, расширяя тип `T`.
+   * Используйте ассерты при необходимости обновить тип вручную.
    */
-  registerMiddleware<Next>(
+	 registerMiddleware<Next>(
     middleware: Middleware<T, Next>
   ): HttpClient<Next> {
     this._middlewares.push(middleware);
-    return new HttpClient<Next>({
-      baseUrl: this.baseUrl,
-      headers: this.headers,
-      middlewares: this._middlewares,
-    });
+		return this as unknown as HttpClient<Next>;
   }
 
   /**
@@ -132,6 +109,18 @@ export class HttpClient<T = Response> {
   get middlewares(): { name: string }[] {
     return this._middlewares.map(m => ({ name: m.name }));
   }
+
+	/**
+   * Создаёт копию текущего клиента HTTP с теми же настройками.
+   * @returns {HttpClient<T>} Новый экземпляр HttpClient с идентичными параметрами.
+   */
+	copy(): HttpClient<T> {
+		return new HttpClient<T>({
+			baseUrl: this.baseUrl,
+			middlewares: this._middlewares.map(middleware => ({...middleware})),
+			headers: this.headers,
+		})
+	}
 
   /**
    * Выполнение GET-запроса с применением middleware.
