@@ -1,7 +1,7 @@
 {
 	"name": "requestify.js",
 	"description": "🚀 Лёгкий и расширяемый HTTP-клиент с поддержкой middleware для JavaScript и TypeScript",
-	"version": "2.1.0",
+	"version": "2.2.0",
 	"type": "module",
 	"repository": {
 		"type": "git",
