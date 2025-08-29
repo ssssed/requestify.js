@@ -41,6 +41,23 @@ const newUser = await api.post('/users', {
 });
 ```
 
+### С кастомным fetch для тестирования
+
+```ts
+import { HttpClient } from 'requestify.js';
+
+// Мок для тестирования
+const mockFetch = jest.fn(async () => new Response('{"data": "test"}'));
+
+const api = new HttpClient({
+	baseUrl: 'https://api.example.com',
+	fetch: mockFetch
+});
+
+const data = await api.get('/users');
+expect(mockFetch).toHaveBeenCalled();
+```
+
 ### С middleware
 
 ```ts

@@ -5,7 +5,7 @@
 Формат основан на [Keep a Changelog](https://keepachangelog.com/ru/1.0.0/),
 и проект следует [Semantic Versioning](https://semver.org/lang/ru/).
 
-## [2.2.0] - 2025-08-29
+## [2.2.0] - Unreleased
 
 ### Added
 
@@ -23,6 +23,10 @@
 ### Fixed
 
 - Исправлена ошибка в `retryMiddleware` - теперь корректно повторяет запросы вместо парсинга ответа
+
+### Documentation
+
+- Обновлена документация по базовой конфигурации - добавлен параметр `fetch` для кастомных HTTP-клиентов
 
 ## [2.1.0] - 2025-07-23
 

@@ -8,6 +8,7 @@ new HttpClient({
   headers?: Record<string, string>;
   middlewares?: Middleware[];
   serializeBodyData?: (body: unknown) => BodyInit | null | undefined;
+  fetch?: (input: string | URL | globalThis.Request, init?: RequestInit) => Promise<Response>;
 });
 ```
 
@@ -38,25 +39,53 @@ new HttpClient({
     ```
 
 - **serializeBodyData** (функция, необязательно)
+
   - Функция для сериализации тела запроса (body) по умолчанию для всех методов (`post`, `put`, `patch`, `delete`).
   - По умолчанию сериализует объекты в JSON, а FormData/Blob/ArrayBuffer/строку — отправляет как есть.
   - Можно переопределить для каждого запроса через config.serializeBodyData.
   - Пример глобального переопределения (только для примера — базовая логика сериализации уже реализована под капотом, подробнее см. [документацию по сериализации](/methoods/serialize-body-data.md)):
     ```ts
     new HttpClient({
-      serializeBodyData: (body) => {
-        if (body instanceof FormData) return body;
-        return JSON.stringify(body);
-      },
+    	serializeBodyData: body => {
+    		if (body instanceof FormData) return body;
+    		return JSON.stringify(body);
+    	}
     });
     ```
   - Пример локального переопределения для одного запроса:
     ```ts
     const client = new HttpClient();
     const formData = new FormData();
-    formData.append("file", file);
-    await client.post("/upload", formData, {
-      serializeBodyData: (data) => data, // отправляем FormData как есть только для этого запроса
+    formData.append('file', file);
+    await client.post('/upload', formData, {
+    	serializeBodyData: data => data // отправляем FormData как есть только для этого запроса
+    });
+    ```
+
+- **fetch** (функция, необязательно)
+  - Кастомная функция для выполнения HTTP-запросов.
+  - По умолчанию используется глобальная функция `fetch` из браузера или Node.js.
+  - Полезно для тестирования, моков или интеграции с другими HTTP-клиентами.
+  - Пример для тестирования:
+
+    ```ts
+    const mockFetch = jest.fn(async () => new Response('{"data": "test"}'));
+
+    const client = new HttpClient({
+    	fetch: mockFetch
+    });
+
+    await client.get('/test');
+    expect(mockFetch).toHaveBeenCalled();
+    ```
+
+  - Пример для Node.js с node-fetch:
+
+    ```ts
+    import fetch from 'node-fetch';
+
+    const client = new HttpClient({
+    	fetch: fetch
     });
     ```
 
@@ -66,6 +95,7 @@ new HttpClient({
 - Упрощает добавление общих заголовков для всех запросов.
 - Даёт возможность гибко расширять и изменять поведение клиента через middleware.
 - Позволяет гибко управлять сериализацией тела запроса для разных форматов данных.
+- Обеспечивает возможность использования кастомных HTTP-клиентов для тестирования и интеграции.
 
 **Рекомендуется**:
 
@@ -73,3 +103,4 @@ new HttpClient({
 - Передавать необходимые заголовки через `headers`, чтобы не дублировать их в каждом запросе.
 - Реализовывать повторно используемую логику через middleware и подключать их через параметр `middlewares`.
 - Для особых случаев сериализации использовать параметр `serializeBodyData` глобально или для конкретного запроса.
+- Использовать параметр `fetch` для тестирования и интеграции с другими HTTP-клиентами.
