@@ -6,5 +6,7 @@
 - [Быстрый старт](./installation.md#🚨-быстрое-начало)
 - [Методы](./methoods/base-config.md)
 - [Middleware](./methoods/middleware.md)
+- [Стандартные middleware](./helpers/default-middlewares.md)
 - [Best Practices](./others/best-practices.md)
+- [Changelog](./others/changelog.md)
 - [Миграция с v1 на v2](./migrations/v1-v2.md)
